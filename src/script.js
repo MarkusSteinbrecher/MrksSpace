@@ -12,43 +12,6 @@ import {Text} from 'troika-three-text'
  * Load Particle Data 
  */
 
-async function fetchFilesList() {
-    const response = await fetch('particles/particle_list.json');
-    const json = await response.json();
-    return json.files;
-}
-  
-async function fetchAndStoreFiles(filesList) {
-    for (const file of filesList) {
-      const response = await fetch(file);
-      const content = await response.text();
-      sessionStorage.setItem(file, content);
-    }
-}
-  
-fetchFilesList().then(fetchAndStoreFiles);
-
-// Search
-function searchFiles(query) {
-    const results = [];
-    for (let i = 0; i < sessionStorage.length; i++) {
-      const key = sessionStorage.key(i);
-      const content = sessionStorage.getItem(key);
-      if (content.includes(query)) {
-        results.push({ file: key, content: content });
-      }
-    }
-    return results;
-}
-
-const searchBar = document.getElementById('searchBar');
-searchBar.addEventListener('input', (event) => {
-    const query = event.target.value;
-    const results = searchFiles(query);
-    console.log(results); // Replace this with your desired way of displaying the results
-});
-
-
 
 
 /**
