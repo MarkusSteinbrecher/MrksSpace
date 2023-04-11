@@ -95,68 +95,7 @@ const sizes = {
  * Search 
  */
 
-function findParticleByName(name) {
-    for (const particle of particles) {
-      if (particle.userData.name === name) {
-        // Calculate the position in front of the particle
-        const offset = new THREE.Vector3(0, 0, -2); // 2 units in front of the particle
-        const newPosition = particle.position.clone().add(offset);
-  
-        // Move the camera to the new position
-        camera.position.set(newPosition.x, newPosition.y, newPosition.z);
-        camera.lookAt(particle.position);
-        controls.target.copy(particle.position); // Update OrbitControls target
-        controls.update(); // Update the controls after setting the new target
-        break;
-      }
-    }
-  }
 
-  // New function to display the search results
-function displaySearchResults(results) {
-    const searchResultsContainer = document.getElementById("search-results");
-    searchResultsContainer.innerHTML = ""; // Clear previous results
-  
-    for (const result of results) {
-      const resultElement = document.createElement("div");
-      resultElement.textContent = result.userData.name;
-      resultElement.classList.add("search-result");
-      resultElement.addEventListener("click", () => {
-        findParticleByName(result.userData.name);
-      });
-  
-      searchResultsContainer.appendChild(resultElement);
-    }
-  }
-
-  // New function to search for particles based on the input
-function searchParticles(query) {
-    const matchingParticles = particles.filter((particle) =>
-      particle.userData.name.toLowerCase().includes(query.toLowerCase())
-    );
-  
-    displaySearchResults(matchingParticles);
-  }
-
-  document.getElementById("search-input").addEventListener("input", (event) => {
-    searchParticles(event.target.value);
-  });
-
-
-window.addEventListener('resize', () =>
-{
-    // Update sizes
-    sizes.width = window.innerWidth
-    sizes.height = window.innerHeight
-
-    // Update camera
-    camera.aspect = sizes.width / sizes.height
-    camera.updateProjectionMatrix()
-
-    // Update renderer
-    renderer.setSize(sizes.width, sizes.height)
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-})
 
 /**
  * Camera
