@@ -1,7 +1,5 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import {Text} from 'troika-three-text'
-
 
 /**
  * Debug . import GUI from 'lil-gui'; const gui = new GUI()
@@ -34,14 +32,14 @@ mrksMaterial.shiniess = 100
 
 // enter Mrks
 const mrks = new THREE.Mesh(
-    new THREE.SphereGeometry(0.5, 23, 42),
+    new THREE.SphereGeometry(0.5, 5, 8),
     mrksMaterial
 )
 
 // enter Stars
 
 const starsGeometry = new THREE.BufferGeometry(1, 1, 1)
-const count = 4223
+const count = 2342
 
 const positions = new Float32Array(count * 3)
 const colors = new Float32Array(count * 3)
@@ -95,7 +93,17 @@ const sizes = {
  * Search 
  */
 
-
+/**
+ * 
+ * Info 
+ */
+const raycaster = new THREE.Raycaster()
+const points = [
+    {
+        position: new THREE.Vector3(1.55, 0.3, -0.6),
+        element: document.querySelector('.point-0'),
+    }
+]
 
 /**
  * Camera
@@ -147,22 +155,37 @@ const tick = () =>
 
 tick()
 
+// update Infopoint
+controls.update()
 
-// Create:
-const myText = new Text()
-scene.add(myText)
+for (const point of points)
+{
+    const screenPosition = point.position.clone()
+    screenPosition.project(camera)
 
-// Set properties to configure:
-myText.text = 'Hello world!'
-myText.anchorX = 'center'
-myText.anchorY = 'middle'
-myText.anchorZ = 'center'
-myText.fontSize = 0.42
-myText.position.z = -23
-myText.position.y = 1
-myText.position.x = 1
-myText.color = 0xFFEF00
+    raycaster.setFromCamera(screenPosition, camera)
+    const intersects = raycaster.intersectObjects(scene.children, true)
+    if (intersects.length == 0) 
+    {
+        point.element.classList.add('visible')
+    } 
+    else 
+    {
+        const intersectionDistance = intersects[0].distance
+        const pointDistance = point.position.distanceTo(camera.position)
+        if(intersectionDistance < pointDistance)
+        {
+            point.element.classList.add('visible')
+        }
+        else 
+        {
+            point.element.classList.remove('visible')
+        }
+    }
 
+    const translateX = screenPosition.x * sizes.width * 0.5
+    const translateY = -screenPosition.y * sizes.height * 0.5
+    point.element.style.transform = `translate(${translateX}px, ${translateY}px)`
 
-// Update the rendering:
-myText.sync()    
+}
+  
